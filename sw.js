@@ -1,11 +1,11 @@
 // sw.js - Service Worker pour Prix Gonflage Oxygène
-const CACHE_NAME = 'gonflage-o2-v1';
+const CACHE_NAME = 'gonflage-o2-v5';
 const urlsToCache = [
-  '/Prix-gonflage-oxygen/',
-  '/Prix-gonflage-oxygen/index.html',
-  '/Prix-gonflage-oxygen/manifest.json',
-  '/Prix-gonflage-oxygen/icon-192.png',
-  '/Prix-gonflage-oxygen/icon-512.png',
+  '/Prix-gonflage-O2/',
+  '/Prix-gonflage-O2/index.html',
+  '/Prix-gonflage-O2/manifest.json',
+  '/Prix-gonflage-O2/icon-192.png',
+  '/Prix-gonflage-O2/icon-512.png',
   'https://cdn.tailwindcss.com',
   'https://unpkg.com/react@18/umd/react.production.min.js',
   'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'
