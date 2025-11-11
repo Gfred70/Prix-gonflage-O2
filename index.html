@@ -63,6 +63,7 @@ if ('serviceWorker' in navigator) {
             const [results, setResults] = useState({});
 
             useEffect(() => {
+                // CALCULS EXACTS SANS ARRONDI INTERMÉDIAIRE
                 const locationTotal = 12 * prixLocation;
                 const oxygeneTotal = 1 * prixOxygene;
                 const divox = locationTotal + oxygeneTotal;
@@ -82,15 +83,11 @@ if ('serviceWorker' in navigator) {
             }, [prixLocation, prixOxygene, volTampon, pInitiale, pMinBooster, 
                 volBlocTransfert, pressionAvant, pressionApres]);
 
-            const formatEuro = (value) => {
-                // ARRONDI À 3 DÉCIMALES
-                return Math.round(value * 1000) / 1000;
-            };
-
             const formatDisplay = (value) => {
-                // Pour l'affichage seulement, on formate avec 3 décimales
-                const rounded = formatEuro(value);
-                return rounded.toString().replace('.', ',');
+                // Arrondi à 3 décimales pour l'affichage seulement
+                const rounded = Math.round(value * 1000) / 1000;
+                // Format avec 3 décimales et virgule
+                return rounded.toFixed(3).replace('.', ',');
             };
 
             // 📱 Fonctions de partage
@@ -125,36 +122,36 @@ if ('serviceWorker' in navigator) {
                     ),
                     
                     h('div', { className: 'p-6 space-y-6' },
-                        // Section B50
+                        // Section B50 - ALIGNÉE
                         h('div', { className: 'bg-slate-700 p-5 rounded-lg border-l-4 border-blue-400' },
                             h('h2', { className: 'text-xl font-bold text-white mb-4' }, 'B50'),
                             h('div', { className: 'space-y-3 text-white' },
                                 h('div', { className: 'flex items-center justify-between' },
-                                    h('span', { className: 'font-semibold' }, 'location ='),
-                                    h('div', { className: 'flex items-center gap-2' },
+                                    h('span', { className: 'font-semibold w-32' }, 'location ='),
+                                    h('div', { className: 'flex items-center gap-2 flex-1 justify-end' },
                                         h('span', null, '12 ×'),
                                         h('input', {
                                             type: 'number',
                                             step: '0.01',
                                             value: prixLocation,
                                             onChange: (e) => handleNumberInput(e, setPrixLocation),
-                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                            className: 'w-20 px-2 py-1 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
                                         }),
-                                        h('span', null, `= ${formatDisplay(results.locationTotal)} €`)
+                                        h('span', { className: 'w-24 text-right' }, `= ${formatDisplay(results.locationTotal)} €`)
                                     )
                                 ),
                                 h('div', { className: 'flex items-center justify-between' },
-                                    h('span', { className: 'font-semibold' }, 'Oxygène ='),
-                                    h('div', { className: 'flex items-center gap-2' },
+                                    h('span', { className: 'font-semibold w-32' }, 'Oxygène ='),
+                                    h('div', { className: 'flex items-center gap-2 flex-1 justify-end' },
                                         h('span', null, '1 ×'),
                                         h('input', {
                                             type: 'number',
                                             step: '0.01',
                                             value: prixOxygene,
                                             onChange: (e) => handleNumberInput(e, setPrixOxygene),
-                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                            className: 'w-20 px-2 py-1 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
                                         }),
-                                        h('span', null, `= ${formatDisplay(results.oxygeneTotal)} €`)
+                                        h('span', { className: 'w-24 text-right' }, `= ${formatDisplay(results.oxygeneTotal)} €`)
                                     )
                                 ),
                                 h('div', { className: 'bg-slate-900 p-3 rounded mt-3' },
@@ -177,7 +174,7 @@ if ('serviceWorker' in navigator) {
                                             type: 'number',
                                             value: volTampon,
                                             onChange: (e) => handleNumberInput(e, setVolTampon),
-                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                            className: 'w-20 px-2 py-1 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
                                         }),
                                         h('span', null, 'L')
                                     )
@@ -189,7 +186,7 @@ if ('serviceWorker' in navigator) {
                                             type: 'number',
                                             value: pInitiale,
                                             onChange: (e) => handleNumberInput(e, setPInitiale),
-                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                            className: 'w-20 px-2 py-1 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
                                         }),
                                         h('span', null, 'b')
                                     )
@@ -201,7 +198,7 @@ if ('serviceWorker' in navigator) {
                                             type: 'number',
                                             value: pMinBooster,
                                             onChange: (e) => handleNumberInput(e, setPMinBooster),
-                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                            className: 'w-20 px-2 py-1 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
                                         }),
                                         h('span', null, 'b')
                                     )
@@ -226,7 +223,7 @@ if ('serviceWorker' in navigator) {
                                             type: 'number',
                                             value: volBlocTransfert,
                                             onChange: (e) => handleNumberInput(e, setVolBlocTransfert),
-                                            className: 'w-24 px-3 py-2 bg-yellow-400 border-2 border-yellow-500 rounded text-slate-900 text-center font-bold'
+                                            className: 'w-20 px-2 py-1 bg-yellow-400 border-2 border-yellow-500 rounded text-slate-900 text-center font-bold'
                                         }),
                                         h('span', null, 'L')
                                     )
@@ -238,7 +235,7 @@ if ('serviceWorker' in navigator) {
                                             type: 'number',
                                             value: pressionAvant,
                                             onChange: (e) => handleNumberInput(e, setPresAvant),
-                                            className: 'w-24 px-3 py-2 bg-yellow-400 border-2 border-yellow-500 rounded text-slate-900 text-center font-bold'
+                                            className: 'w-20 px-2 py-1 bg-yellow-400 border-2 border-yellow-500 rounded text-slate-900 text-center font-bold'
                                         }),
                                         h('span', null, 'b')
                                     )
@@ -250,7 +247,7 @@ if ('serviceWorker' in navigator) {
                                             type: 'number',
                                             value: pressionApres,
                                             onChange: (e) => handleNumberInput(e, setPresApres),
-                                            className: 'w-24 px-3 py-2 bg-yellow-400 border-2 border-yellow-500 rounded text-slate-900 text-center font-bold'
+                                            className: 'w-20 px-2 py-1 bg-yellow-400 border-2 border-yellow-500 rounded text-slate-900 text-center font-bold'
                                         }),
                                         h('span', null, 'b')
                                     )
