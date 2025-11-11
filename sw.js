@@ -1,4 +1,4 @@
-// sw.js - Service Worker pour Prix Gonflage Oxygène
+// sw.js - Service Worker pour Prix Gonflage O2
 const CACHE_NAME = 'gonflage-o2-v5';
 const urlsToCache = [
   '/Prix-gonflage-O2/',
