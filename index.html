@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur Prix Gonflage Oxygène</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+<!-- PWA Configuration -->
+<link rel="manifest" href="https://gfred70.github.io/Prix-gonflage-oxygen/manifest.json">
+<meta name="theme-color" content="#f59e0b">
+<link rel="icon" type="image/png" href="icon-192.png">
+
+<!-- Service Worker CORRIGÉ -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('https://gfred70.github.io/Prix-gonflage-oxygen/sw.js')
+      .then(function(registration) {
+        console.log('Service Worker enregistré:', registration.scope);
+      })
+      .catch(function(error) {
+        console.log('Échec enregistrement Service Worker:', error);
+      });
+  });
+}
+</script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+    </style>
+</head>
+    
+<body>
+    <div id="app"></div>
+
+    <script type="module">
+        const { useState, useEffect, createElement: h } = React;
+
+        // ⭐ UNIQUEMENT LA FONCTION POUR CORRIGER LE ZÉRO ⭐
+        const handleNumberInput = (e, setter) => {
+            const value = e.target.value;
+            // Permet chiffres, points et virgules, supprime le zéro automatique
+            const cleanValue = value.replace(/[^0-9.,]/g, '')
+                                  .replace(/^0+(?=\d)/, '') // Supprime les zéros en début
+                                  .replace(',', '.');
+            setter(cleanValue === '' ? 0 : parseFloat(cleanValue) || 0);
+        };
+
+        function OxygenCalculator() {
+            const [prixLocation, setPrixLocation] = useState(7.50);
+            const [prixOxygene, setPrixOxygene] = useState(75.66);
+            const [volTampon, setVolTampon] = useState(50);
+            const [pInitiale, setPInitiale] = useState(300);
+            const [pMinBooster, setPMinBooster] = useState(50);
+            const [volBlocTransfert, setVolBlocTransfert] = useState(7);
+            const [pressionAvant, setPresAvant] = useState(90);
+            const [pressionApres, setPresApres] = useState(230);
+            const [results, setResults] = useState({});
+
+            useEffect(() => {
+                const locationTotal = 12 * prixLocation;
+                const oxygeneTotal = 1 * prixOxygene;
+                const divox = locationTotal + oxygeneTotal;
+                const pUtilisable = pInitiale - pMinBooster;
+                const volConstante = pUtilisable * volTampon;
+                const prixAuLitre = divox / (volConstante / 1000);
+                const prixParL = prixAuLitre / 1000;
+                const differencePression = pressionApres - pressionAvant;
+                const volConstante2 = differencePression * volBlocTransfert;
+                const prixGonflage = volConstante2 * prixParL;
+
+                setResults({
+                    locationTotal, oxygeneTotal, divox, pUtilisable,
+                    volConstante, prixAuLitre, prixParL,
+                    differencePression, volConstante2, prixGonflage
+                });
+            }, [prixLocation, prixOxygene, volTampon, pInitiale, pMinBooster, 
+                volBlocTransfert, pressionAvant, pressionApres]);
+
+            const formatEuro = (value) => {
+                return new Intl.NumberFormat('fr-FR', {
+                    minimumFractionDigits: 3,
+                    maximumFractionDigits: 3
+                }).format(value);
+            };
+
+            // 📱 Fonctions de partage EXACTEMENT COMME VOUS VOULIEZ
+            const shareToWhatsApp = () => {
+                const text = `🧪 Gonflage O₂\n` +
+                             `Volume du bloc à remplir: ${volBlocTransfert} L\n` +
+                             `Volume transféré: ${results.volConstante2} L\n` +
+                             `Prix au litre: ${formatEuro(results.prixParL).replace('.', ',')} €\n` +
+                             `💰 Coût final: ${formatEuro(results.prixGonflage).replace('.', ',')} €`;
+                
+                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            };
+
+            const copyToClipboard = () => {
+                const text = `🧪 Gonflage O₂\n` +
+                             `Volume du bloc à remplir: ${volBlocTransfert} L\n` +
+                             `Volume transféré: ${results.volConstante2} L\n` +
+                             `Prix au litre: ${formatEuro(results.prixParL).replace('.', ',')} €\n` +
+                             `💰 Coût final: ${formatEuro(results.prixGonflage).replace('.', ',')} €`;
+                
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('✅ Résultat copié !');
+                });
+            };
+
+            return h('div', { className: 'min-h-screen bg-gradient-to-br from-slate-700 to-slate-900 p-4' },
+                h('div', { className: 'max-w-2xl mx-auto bg-slate-800 rounded-lg shadow-2xl overflow-hidden' },
+                    // Header
+                    h('div', { className: 'bg-slate-700 p-6 text-center border-b-4 border-amber-500' },
+                        h('h1', { className: 'text-3xl font-bold text-white' }, 
+                            '🧪 Prix gonflage oxygène')
+                    ),
+                    
+                    h('div', { className: 'p-6 space-y-6' },
+                        // Section B50
+                        h('div', { className: 'bg-slate-700 p-5 rounded-lg border-l-4 border-blue-400' },
+                            h('h2', { className: 'text-xl font-bold text-white mb-4' }, 'B50'),
+                            h('div', { className: 'space-y-3 text-white' },
+                                h('div', { className: 'flex items-center justify-between' },
+                                    h('span', { className: 'font-semibold' }, 'location ='),
+                                    h('div', { className: 'flex items-center gap-2' },
+                                        h('span', null, '12 ×'),
+                                        h('input', {
+                                            type: 'number',
+                                            step: '0.01',
+                                            value: prixLocation,
+                                            onChange: (e) => handleNumberInput(e, setPrixLocation),
+                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                        }),
+                                        h('span', null, `= ${formatEuro(results.locationTotal).replace('.', ',')} €`)
+                                    )
+                                ),
+                                h('div', { className: 'flex items-center justify-between' },
+                                    h('span', { className: 'font-semibold' }, 'Oxygène ='),
+                                    h('div', { className: 'flex items-center gap-2' },
+                                        h('span', null, '1 ×'),
+                                        h('input', {
+                                            type: 'number',
+                                            step: '0.01',
+                                            value: prixOxygene,
+                                            onChange: (e) => handleNumberInput(e, setPrixOxygene),
+                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                        }),
+                                        h('span', null, `= ${formatEuro(results.oxygeneTotal).replace('.', ',')} €`)
+                                    )
+                                ),
+                                h('div', { className: 'bg-slate-900 p-3 rounded mt-3' },
+                                    h('div', { className: 'flex items-center justify-between text-white text-lg' },
+                                        h('span', { className: 'font-bold' }, 'Divox'),
+                                        h('span', { className: 'font-bold' }, `= ${formatEuro(results.divox).replace('.', ',')} €`)
+                                    )
+                                )
+                            )
+                        ),
+
+                        // Section O2
+                        h('div', { className: 'bg-slate-700 p-5 rounded-lg border-l-4 border-green-400' },
+                            h('h2', { className: 'text-xl font-bold text-white mb-4' }, 'O2'),
+                            h('div', { className: 'space-y-3 text-white' },
+                                h('div', { className: 'flex items-center justify-between' },
+                                    h('span', { className: 'font-semibold' }, 'Vol tampon ='),
+                                    h('div', { className: 'flex items-center gap-2' },
+                                        h('input', {
+                                            type: 'number',
+                                            value: volTampon,
+                                            onChange: (e) => handleNumberInput(e, setVolTampon),
+                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                        }),
+                                        h('span', null, 'L')
+                                    )
+                                ),
+                                h('div', { className: 'flex items-center justify-between' },
+                                    h('span', { className: 'font-semibold' }, 'P initiale ='),
+                                    h('div', { className: 'flex items-center gap-2' },
+                                        h('input', {
+                                            type: 'number',
+                                            value: pInitiale,
+                                            onChange: (e) => handleNumberInput(e, setPInitiale),
+                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                        }),
+                                        h('span', null, 'b')
+                                    )
+                                ),
+                                h('div', { className: 'flex items-center justify-between' },
+                                    h('span', { className: 'font-semibold' }, 'P min booster ='),
+                                    h('div', { className: 'flex items-center gap-2' },
+                                        h('input', {
+                                            type: 'number',
+                                            value: pMinBooster,
+                                            onChange: (e) => handleNumberInput(e, setPMinBooster),
+                                            className: 'w-24 px-3 py-2 bg-slate-600 border-2 border-slate-500 rounded text-white text-center font-bold'
+                                        }),
+                                        h('span', null, 'b')
+                                    )
+                                ),
+                                h('div', { className: 'bg-slate-900 p-3 rounded mt-3' },
+                                    h('div', { className: 'flex items-center justify-between text-white text-lg' },
+                                        h('span', { className: 'font-bold' }, 'Prix / L'),
+                                        h('span', { className: 'font-bold' }, `= ${formatEuro(results.prixParL).replace('.', ',')} €`)
+                                    )
+                                )
+                            )
+                        ),
+
+                        // Section Coût
+                        h('div', { className: 'bg-slate-700 p-5 rounded-lg border-l-4 border-yellow-400' },
+                            h('h2', { className: 'text-xl font-bold text-white mb-4' }, 'Coût'),
+                            h('div', { className: 'space-y-3 text-white' },
+                                h('div', { className: 'flex items-center justify-between' },
+                                    h('span', { className: 'font-semibold' }, 'Vol bloc transfert ='),
+                                    h('div', { className: 'flex items-center gap-2' },
+                                        h('input', {
+                                            type: 'number',
+                                            value: volBlocTransfert,
+                                            onChange: (e) => handleNumberInput(e, setVolBlocTransfert),
+                                            className: 'w-24 px-3 py-2 bg-yellow-400 border-2 border-yellow-500 rounded text-slate-900 text-center font-bold'
+                                        }),
+                                        h('span', null, 'L')
+                                    )
+                                ),
+                                h('div', { className: 'flex items-center justify-between' },
+                                    h('span', { className: 'font-semibold' }, 'Pression avant ='),
+                                    h('div', { className: 'flex items-center gap-2' },
+                                        h('input', {
+                                            type: 'number',
+                                            value: pressionAvant,
+                                            onChange: (e) => handleNumberInput(e, setPresAvant),
+                                            className: 'w-24 px-3 py-2 bg-yellow-400 border-2 border-yellow-500 rounded text-slate-900 text-center font-bold'
+                                        }),
+                                        h('span', null, 'b')
+                                    )
+                                ),
+                                h('div', { className: 'flex items-center justify-between' },
+                                    h('span', { className: 'font-semibold' }, 'Pression après ='),
+                                    h('div', { className: 'flex items-center gap-2' },
+                                        h('input', {
+                                            type: 'number',
+                                            value: pressionApres,
+                                            onChange: (e) => handleNumberInput(e, setPresApres),
+                                            className: 'w-24 px-3 py-2 bg-yellow-400 border-2 border-yellow-500 rounded text-slate-900 text-center font-bold'
+                                        }),
+                                        h('span', null, 'b')
+                                    )
+                                )
+                            )
+                        ),
+
+                        // Résultat Final
+                        h('div', { className: 'bg-black p-6 rounded-lg text-center border-4 border-amber-500' },
+                            h('h2', { className: 'text-5xl font-bold text-white' },
+                                `Gonflage = ${formatEuro(results.prixGonflage).replace('.', ',')} €`
+                            )
+                        ),
+
+                        // ✅ Boutons de partage
+                        h('div', { className: 'flex gap-3 justify-center' },
+                            h('button', {
+                                onClick: shareToWhatsApp,
+                                className: 'bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg flex items-center gap-2 transition duration-200'
+                            },
+                                h('span', { className: 'text-xl' }, '📱'),
+                                h('span', null, 'WhatsApp')
+                            ),
+                            h('button', {
+                                onClick: copyToClipboard,
+                                className: 'bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg flex items-center gap-2 transition duration-200'
+                            },
+                                h('span', { className: 'text-xl' }, '📋'),
+                                h('span', null, 'Copier')
+                            )
+                        ),
+
+                        // ⭐ VOTRE SIGNATURE AJOUTÉE ICI ⭐
+                        h('div', { className: 'text-center pt-4' },
+                            h('p', { 
+                                className: 'text-slate-400 italic text-sm' 
+                            }, 'Gfred70 app')
+                        )
+                    )
+                )
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('app'));
+        root.render(React.createElement(OxygenCalculator));
+    </script>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+</body>
+</html>
