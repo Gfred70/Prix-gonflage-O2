@@ -1,7 +1,7 @@
 {
   "name": "Prix Gonflage O2",
   "short_name": "Gonflage O2",
-  "description": "Calculateur prix gonflage oxygène",
+  "description": "Calculateur prix gonflage O2",
   "start_url": "/Prix-gonflage-O2/",
 
   "display": "standalone",
